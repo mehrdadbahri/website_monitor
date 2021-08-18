@@ -15,6 +15,7 @@ class Monitor(object):
     state = 'up'
     last_fail_time = None
     has_called = False
+    fail_counter = 0
 
     def __init__(self):
         self.configs = configparser.ConfigParser()
@@ -35,10 +36,17 @@ class Monitor(object):
                 if self.configs['main']['log_errors'] == 'true':
                     logging_lib.log.logger.exception(e)
             if result == 'fail':
-                self.website_down()
+                self.fail_counter += 1
+                if self.fail_counter > 2:
+                    self.website_down()
+                    self.fail_counter = 0
             else:
                 self.website_up()
-            time.sleep(10)
+                self.fail_counter = 0
+            if self.fail_counter:
+                time.sleep(3)
+            else:
+                time.sleep(10)
 
     def website_up(self):
         if self.state == 'down':
@@ -71,7 +79,7 @@ class Monitor(object):
 
     def get_alert_message(self):
         if self.state == 'down':
-            return "⚠️ Host {} is down.".format(self.title)
+            return "❌ Host {} is down.".format(self.title)
         return "✅ Host {} is up".format(self.title)
 
     def call_alert(self):
