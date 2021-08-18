@@ -1,10 +1,13 @@
 import time
+import sys
 import datetime
 import requests
 import telegram
 from pathlib import Path
 from threading import Thread
 import configparser
+import logging_lib
+import logging
 
 
 class Monitor(object):
@@ -23,11 +26,17 @@ class Monitor(object):
     def start(self):
         session = requests.Session()
         while self.running:
-            response = session.get(self.host)
-            if response.status_code != 200:
+            try:
+                response = session.get(self.host, timeout=5)
+                if response.status_code == 200:
+                    result = 'success'
+            except requests.exceptions.RequestException:
+                result = 'fail'
+            if result == 'fail':
                 self.website_down()
             else:
                 self.website_up()
+            time.sleep(10)
 
     def website_up(self):
         if self.state == 'down':
@@ -65,9 +74,14 @@ class Monitor(object):
 
     def call_alert(self):
         # TODO: implement alert with voice call
+        pass
 
 
 if __name__ == "__main__":
+    # redirect stdout and stderr to log file
+    sys.stderr = logging_lib.MyLogger(logging_lib.log.logger, logging.ERROR)
+    sys.stdout = logging_lib.MyLogger(logging_lib.log.logger, logging.INFO)
+
     host = "https://mineitor.com"
     monitor = Monitor()
     discovery_thread = Thread(target=monitor.start, args=[])
