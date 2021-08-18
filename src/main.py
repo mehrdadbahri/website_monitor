@@ -18,7 +18,7 @@ class Monitor(object):
 
     def __init__(self):
         self.host = host
-        self.confgs = configparser.ConfigParser()
+        self.configs = configparser.ConfigParser()
         path = Path.home() / 'website_monitor.ini'
         self.configs.read(path)
         self.host = self.configs['Website']['url']
