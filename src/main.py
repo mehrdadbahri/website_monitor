@@ -23,13 +23,17 @@ class Monitor(object):
         self.configs.read(path)
         self.host = self.configs['Website']['url']
         self.title = self.configs['Website']['title']
+        self.timeout = int(self.configs['main']['timeout'])
+        self.sleep = int(self.configs['main']['sleep'])
+        self.fail_counts = int(self.configs['main']['fails']) - 1
+        self.fail_sleep = int(self.configs['main']['fail_sleep'])
 
     def start(self):
         session = requests.Session()
         while self.running:
             result = 'fail'
             try:
-                response = session.get(self.host, timeout=15)
+                response = session.get(self.host, timeout=self.timeout)
                 if response.status_code == 200:
                     result = 'success'
             except requests.exceptions.RequestException as e:
@@ -37,16 +41,16 @@ class Monitor(object):
                     logging_lib.log.logger.exception(e)
             if result == 'fail':
                 self.fail_counter += 1
-                if self.fail_counter > 2:
+                if self.fail_counter > self.fail_counts:
                     self.website_down()
                     self.fail_counter = 0
             else:
                 self.website_up()
                 self.fail_counter = 0
             if self.fail_counter:
-                time.sleep(3)
+                time.sleep(self.fail_sleep)
             else:
-                time.sleep(10)
+                time.sleep(self.sleep)
 
     def website_up(self):
         if self.state == 'down':
