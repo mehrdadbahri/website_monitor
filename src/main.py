@@ -63,7 +63,7 @@ class Monitor(object):
             self.telegram_send(chat_id, msg)
 
     def telegram_send(self, chat_id, msg):
-        bot_token = self.confgs['Telegram']['token']
+        bot_token = self.configs['Telegram']['token']
         bot = telegram.Bot(token=bot_token)
         bot.send_message(chat_id, msg, telegram.ParseMode.HTML)
 
