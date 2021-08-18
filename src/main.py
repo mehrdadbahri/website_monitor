@@ -57,7 +57,7 @@ class Monitor(object):
                 self.has_called = True
 
     def tg_alert(self):
-        chat_ids = self.configs['Telegram']['accounts']
+        chat_ids = self.configs['Telegram']['accounts'].split(',')
         msg = self.get_alert_message()
         for chat_id in chat_ids:
             self.telegram_send(chat_id, msg)
