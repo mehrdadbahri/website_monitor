@@ -26,12 +26,14 @@ class Monitor(object):
     def start(self):
         session = requests.Session()
         while self.running:
+            result = 'fail'
             try:
-                response = session.get(self.host, timeout=5)
+                response = session.get(self.host, timeout=15)
                 if response.status_code == 200:
                     result = 'success'
-            except requests.exceptions.RequestException:
-                result = 'fail'
+            except requests.exceptions.RequestException as e:
+                if self.configs['main']['log_errors'] == 'true':
+                    logging_lib.log.logger.exception(e)
             if result == 'fail':
                 self.website_down()
             else:
