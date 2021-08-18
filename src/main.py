@@ -1,6 +1,6 @@
 import time
 import sys
-import datetime
+from datetime import datetime
 import requests
 import telegram
 from pathlib import Path
