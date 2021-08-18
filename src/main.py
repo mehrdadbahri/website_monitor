@@ -58,7 +58,7 @@ class Monitor(object):
 
     def tg_alert(self):
         chat_ids = self.configs['Telegram']['accounts']
-        msg = self.get_message()
+        msg = self.get_alert_message()
         for chat_id in chat_ids:
             self.telegram_send(chat_id, msg)
 
@@ -68,7 +68,7 @@ class Monitor(object):
         bot.send_message(chat_id, msg, telegram.ParseMode.HTML)
 
     def get_alert_message(self):
-        if self.state == 'up':
+        if self.state == 'down':
             return "⚠️ Host {} is down.".format(self.host)
         return "✅ Host {} is up".format(self.host)
 
