@@ -17,11 +17,11 @@ class Monitor(object):
     has_called = False
 
     def __init__(self):
-        self.host = host
         self.configs = configparser.ConfigParser()
         path = Path.home() / 'website_monitor.ini'
         self.configs.read(path)
         self.host = self.configs['Website']['url']
+        self.title = self.configs['Website']['title']
 
     def start(self):
         session = requests.Session()
@@ -69,8 +69,8 @@ class Monitor(object):
 
     def get_alert_message(self):
         if self.state == 'down':
-            return "⚠️ Host {} is down.".format(self.host)
-        return "✅ Host {} is up".format(self.host)
+            return "⚠️ Host {} is down.".format(self.title)
+        return "✅ Host {} is up".format(self.title)
 
     def call_alert(self):
         # TODO: implement alert with voice call
