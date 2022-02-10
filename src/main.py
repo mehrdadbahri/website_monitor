@@ -96,7 +96,6 @@ if __name__ == "__main__":
     sys.stderr = logging_lib.MyLogger(logging_lib.log.logger, logging.ERROR)
     sys.stdout = logging_lib.MyLogger(logging_lib.log.logger, logging.INFO)
 
-    host = "https://mineitor.com"
     monitor = Monitor()
     discovery_thread = Thread(target=monitor.start, args=[])
     discovery_thread.daemon = True
